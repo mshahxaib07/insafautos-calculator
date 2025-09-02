@@ -1,0 +1,130 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Calculator</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <!-- PWA Setup -->
+  <link rel="manifest" href="manifest.json">
+  <meta name="theme-color" content="#007bff">
+  
+  <style>
+    body { 
+      font-family: Arial, sans-serif; 
+      display: flex; 
+      justify-content: center; 
+      align-items: center; 
+      height: 100vh; 
+      background: #f0f0f0; 
+      margin: 0;
+    }
+    .calculator { 
+      background: white; 
+      padding: 20px; 
+      border-radius: 12px; 
+      box-shadow: 0 4px 10px rgba(0,0,0,0.2); 
+      width: 260px;
+    }
+    input { 
+      width: 100%; 
+      height: 50px; 
+      margin-bottom: 10px; 
+      text-align: right; 
+      font-size: 20px; 
+      padding: 5px; 
+      border-radius: 8px; 
+      border: 1px solid #ccc; 
+      box-sizing: border-box;
+      overflow-x: auto;
+    }
+    button { 
+      width: 60px; 
+      height: 60px; 
+      margin: 5px; 
+      font-size: 20px; 
+      border-radius: 8px; 
+      border: none; 
+      background: #007bff; 
+      color: white; 
+      cursor: pointer; 
+      transition: background 0.2s;
+    }
+    button:hover { background: #0056b3; }
+    .row { display: flex; justify-content: center; }
+  </style>
+</head>
+<body>
+  <div class="calculator">
+    <input type="text" id="display" disabled>
+    <div class="row">
+      <button onclick="clearDisplay()">C</button>
+      <button onclick="append('/')">÷</button>
+      <button onclick="append('*')">×</button>
+      <button onclick="del()">⌫</button>
+    </div>
+    <div class="row">
+      <button onclick="append('7')">7</button>
+      <button onclick="append('8')">8</button>
+      <button onclick="append('9')">9</button>
+      <button onclick="append('-')">-</button>
+    </div>
+    <div class="row">
+      <button onclick="append('4')">4</button>
+      <button onclick="append('5')">5</button>
+      <button onclick="append('6')">6</button>
+      <button onclick="append('+')">+</button>
+    </div>
+    <div class="row">
+      <button onclick="append('1')">1</button>
+      <button onclick="append('2')">2</button>
+      <button onclick="append('3')">3</button>
+      <button onclick="calculate()">=</button>
+    </div>
+    <div class="row">
+      <button onclick="append('0')">0</button>
+      <button onclick="append('.')">.</button>
+      <button onclick="append('%')">%</button>
+    </div>
+  </div>
+
+  <script>
+    const display = document.getElementById('display');
+
+    function append(value) {
+      display.value += value;
+    }
+    function clearDisplay() {
+      display.value = '';
+    }
+    function del() {
+      display.value = display.value.slice(0, -1);
+    }
+    function calculate() {
+      try {
+        display.value = eval(display.value.replace(/÷/g,"/").replace(/×/g,"*"));
+      } catch {
+        display.value = 'Error';
+      }
+    }
+
+    // Keyboard support
+    document.addEventListener("keydown", (event) => {
+      if(!isNaN(event.key) || ["+","-","*","/","%","."].includes(event.key)) {
+        append(event.key);
+      } else if(event.key === "Enter") {
+        calculate();
+      } else if(event.key === "Backspace") {
+        del();
+      } else if(event.key.toLowerCase() === "c") {
+        clearDisplay();
+      }
+    });
+
+    // Register Service Worker for PWA
+    if ("serviceWorker" in navigator) {
+      navigator.serviceWorker.register("service-worker.js");
+    }
+  </script>
+</body>
+</html>
